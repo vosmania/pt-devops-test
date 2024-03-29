@@ -1,30 +1,27 @@
-import time
-from utils import SSHConnector, APPUpdater, ReportCard
+from utils import SSHConnector, APPUpdater, ReportCard, DiscordMessage
 
 def main():
-    # Connect to docker container with default info
-    client = SSHConnector('localhost', 'root', 'sshpass1', 2222)
-    client.connect()
+    try:
+        # Connect to docker container with default info
+        client = SSHConnector("localhost", "root", "sshpass1", 2222)
+        client.connect()
 
-    # Run the app updater
-    start_time = time.time()
-    updater = APPUpdater(client)
-    updater.run()
-    update_time = time.time() - start_time
-    print(f"Update time: {update_time:.2f} seconds")
+        # Run the app updater
+        updater = APPUpdater(client)
+        updater.run()
 
-    # Generate report card
-    start_time = time.time()
-    report = ReportCard(client)
-    report.generate()
-    report_time = time.time() - start_time
-    print(f"Report generation time: {report_time:.2f} seconds")
+        # Generate report card
+        report = ReportCard(client)
+        report.generate()
 
-    # Disconnect from the server
-    client.disconnect()
+        print("\nFinished\n------------------------------------")
 
-    total_time = update_time + report_time
-    print(f"Total execution time: {total_time:.2f} seconds")
+    except Exception as e:
+        DiscordMessage(e).send()
+    finally:
+        # Disconnect from the server
+        client.disconnect()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
