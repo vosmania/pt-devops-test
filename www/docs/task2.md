@@ -1,5 +1,9 @@
 # Task 2 - Log analysis
 
+## Connecting to the Docker container
+
+        docker exec -it <container-id> /bin/sh
+
 ## Request counts
 
 1. **Get the count of GetTemporaryAuthenticationTokenRequest from the log**

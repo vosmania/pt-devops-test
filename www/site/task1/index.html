@@ -649,7 +649,7 @@
 </tbody>
 </table>
 <h2 id="error-handling">Error handling</h2>
-<p>Should the program run into any exceptions it will send out timestamped error messages via Discord and SMS (Twilio). Since I am using a Twilio trial to demonstrate this implementation, it means that messages can only be sent to my own phone number, however that also means that I can safely leave the API credentials in the code without any risk to myself.</p>
+<p>Should the program run into any exceptions it will send out timestamped error messages via Discord and SMS (Twilio). To test SMS feature, credentials must be added to the NotificationSender class, since Twilio automatically resets secrets if one is pushed to GH.</p>
 <h3 id="discord-message">Discord Message</h3>
 <p><img alt="Discord Message" src="../img/discord.png" /></p>
 <h3 id="twilio-message">Twilio Message</h3>
