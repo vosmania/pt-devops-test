@@ -3,7 +3,7 @@ from utils import SSHConnector, APPUpdater, ReportCard#, NotificationSender
 def main():
     try:
         # Connect to docker container with default info
-        # Storing credentials like this is something I would normally never do.
+        # IRL this would be a configuration file or environment variables or a secret manager
         client = SSHConnector("localhost", "root", "sshpass1", 2222)
         client.connect()
 
@@ -16,7 +16,7 @@ def main():
         report.generate()
 
         print("\nFinished\n------------------------------------")
-    # in case of any exception, catch it and send it over Discord and SMS via Twilio.
+    # in case of any exception makes it out if restart fails, catch it and send it over Discord and SMS via Twilio.
     # to test twilio sms, credentials must be provided in the NotificationSender class
     # since Twilio is tracking secrets on Github they can't be pushed.
     except Exception as e:

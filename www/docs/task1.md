@@ -30,7 +30,7 @@
 
 ## Error handling
 
-Should the program run into any exceptions it will send out timestamped error messages via Discord and SMS (Twilio). To test SMS feature, credentials must be added to the NotificationSender class, since Twilio automatically resets secrets if one is pushed to GH.
+If we fail to make an SSH connection, we try to restart the container, in this implementation we simply look for the latest container running the **sql_task** image since that was used in the task description. Should the program run into any exceptions that make it out of the main program look we catch them and send out timestamped error messages via Discord and SMS (Twilio). To test SMS feature, credentials must be added to the NotificationSender class, since Twilio automatically resets secrets if one is pushed to GH.
 
 ### Discord Message
 

@@ -1,10 +1,21 @@
-import requests
-import paramiko
-import pandas as pd
-from twilio.rest import Client
-from tabulate import tabulate
-import re
+# Standard library imports
 import datetime
+import re
+import subprocess
+import time
+
+# Third party imports
+import pandas as pd
+import paramiko
+import requests
+from tabulate import tabulate
+from twilio.rest import Client
+
+
+class DockerRestartFailed(
+    Exception
+):  # Custom exception for when Docker container fails to restart
+    pass
 
 
 class SSHConnector:
@@ -33,9 +44,43 @@ class SSHConnector:
         self.client = paramiko.SSHClient()
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    def connect(self):
+    def restart_docker_container(self):
         """
-        Connects to the remote server.
+        Tries to restart a Docker container once. If it fails, raises an exception.
+
+        Raises:
+            DockerRestartFailed: If the Docker container fails to restart.
+        """
+        image_name = "sql_task"  # replace this with your image name to test.
+        command = [
+            "docker",
+            "ps",
+            "-a",
+            "--filter",
+            f"ancestor={image_name}",
+            "--format",
+            "{{.ID}}",
+            "--latest",
+        ]
+        result = subprocess.run(command, capture_output=True, text=True)
+
+        if result.returncode != 0 or not result.stdout.strip():
+            raise DockerRestartFailed(
+                f"Failed to find Docker container with image {image_name}"
+            )
+
+        container_id = result.stdout.strip()
+        command = ["docker", "restart", container_id]
+        result = subprocess.run(command, capture_output=True, text=True)
+
+        if result.returncode != 0:
+            raise DockerRestartFailed(
+                f"Failed to restart Docker container {container_id}. Error: {result.stderr}"
+            )
+
+    def attempt_connection(self):
+        """
+        Attempts to connect to the remote server.
         """
         self.client.connect(
             hostname=self.hostname,
@@ -43,6 +88,26 @@ class SSHConnector:
             password=self.password,
             port=self.port,
         )
+
+    def connect(self):
+        """
+        Connects to the remote server.
+        """
+        try:
+            self.attempt_connection()
+        except Exception as e:
+            print(f"SSH connection failed: {e}")
+            print("Attempting to restart Docker container...")
+            self.restart_docker_container()
+
+            print("Waiting for the Docker container to start...")
+            time.sleep(10)  # Wait for 10 seconds
+
+            print("Attempting to reconnect...")
+            try:
+                self.attempt_connection()
+            except Exception as e:
+                print(f"Reconnection attempt failed: {e}")
 
     def disconnect(self):
         """
@@ -60,7 +125,7 @@ class SSHConnector:
         Returns:
             str: The output of the command executed on the remote server.
         """
-        stdin, stdout, stderr = self.client.exec_command(command)
+        stdout = self.client.exec_command(command)[1]
         output = stdout.read().decode()
         return output
 
@@ -178,9 +243,7 @@ class ReportCard:
         # create Student column as in example
         df["Student"] = df["Name"] + " (" + df["Age"].astype(str) + ")"
         # pivot the classes to create a report card style table
-        report_card = df.pivot(
-            index="Student", columns="class_name", values="Grade"
-        )
+        report_card = df.pivot(index="Student", columns="class_name", values="Grade")
         # get the unique class names and reorder the columns to match the original order
         class_names = df["class_name"].unique()
         report_card = report_card[class_names]
@@ -203,6 +266,7 @@ class ReportCard:
         data_in = re.sub(", ", ",", data_in)
         return data_in
 
+
 class NotificationSender:
     """
     Represents a unified notification sender that can send messages to Discord and SMS via Twilio.
@@ -217,17 +281,17 @@ class NotificationSender:
         """
         self.exception = exception
         self.discord_webhook_url = "your_discord_webhook_url_here"
-        self.twilio_account_sid = 'your_account_sid_here'
-        self.twilio_auth_token = 'your_auth_token_here'
-        self.twilio_phone_number = 'your_twilio_phone_number_here'
-        self.to_phone_number = 'your_phone_number_here'
+        self.twilio_account_sid = "your_account_sid_here"
+        self.twilio_auth_token = "your_auth_token_here"
+        self.twilio_phone_number = "your_twilio_phone_number_here"
+        self.to_phone_number = "your_phone_number_here"
 
     def send_discord_message(self):
         """
         Sends the Discord message to the webhook URL.
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        if hasattr(self.exception, 'strerror'):
+        if hasattr(self.exception, "strerror"):
             message = f"Error occurred at {timestamp}: {self.exception.strerror}"
         else:
             message = f"Error occurred at {timestamp}: {str(self.exception)}"
@@ -243,15 +307,13 @@ class NotificationSender:
         Sends an SMS via Twilio.
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        if hasattr(self.exception, 'strerror'):
+        if hasattr(self.exception, "strerror"):
             message_body = f"Error occurred at {timestamp}: {self.exception.strerror}"
         else:
             message_body = f"Error occurred at {timestamp}: {str(self.exception)}"
         client = Client(self.twilio_account_sid, self.twilio_auth_token)
         message = client.messages.create(
-            body=message_body,
-            from_=self.twilio_phone_number,
-            to=self.to_phone_number
+            body=message_body, from_=self.twilio_phone_number, to=self.to_phone_number
         )
         print(f"SMS ID: {message.sid} was sent to {self.to_phone_number}")
 
