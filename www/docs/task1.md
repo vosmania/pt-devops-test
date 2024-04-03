@@ -30,7 +30,7 @@
 
 ## Error handling
 
-Should the program run into any exceptions it will send out timestamped error messages via Discord and SMS (Twilio). Since I am using a Twilio trial to demonstrate this implementation, it means that messages can only be sent to my own phone number, however that also means that I can safely leave the API credentials in the code without any risk to myself.
+Should the program run into any exceptions it will send out timestamped error messages via Discord and SMS (Twilio). To test SMS feature, credentials must be added to the NotificationSender class, since Twilio automatically resets secrets if one is pushed to GH.
 
 ### Discord Message
 
