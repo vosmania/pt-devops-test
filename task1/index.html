@@ -649,7 +649,7 @@
 </tbody>
 </table>
 <h2 id="error-handling">Error handling</h2>
-<p>Should the program run into any exceptions it will send out timestamped error messages via Discord and SMS (Twilio). To test SMS feature, credentials must be added to the NotificationSender class, since Twilio automatically resets secrets if one is pushed to GH.</p>
+<p>If we fail to make an SSH connection, we try to restart the container, in this implementation we simply look for the latest container running the <strong>sql_task</strong> image since that was used in the task description. Should the program run into any exceptions that make it out of the main program look we catch them and send out timestamped error messages via Discord and SMS (Twilio). To test SMS feature, credentials must be added to the NotificationSender class, since Twilio automatically resets secrets if one is pushed to GH.</p>
 <h3 id="discord-message">Discord Message</h3>
 <p><img alt="Discord Message" src="../img/discord.png" /></p>
 <h3 id="twilio-message">Twilio Message</h3>
