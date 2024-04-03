@@ -16,7 +16,9 @@ def main():
         report.generate()
 
         print("\nFinished\n------------------------------------")
-    # in case of any exception, catch it and send it over Discord and SMS via Twilio
+    # in case of any exception, catch it and send it over Discord and SMS via Twilio.
+    # to test twilio sms, credentials must be provided in the NotificationSender class
+    # since Twilio is tracking secrets on Github they can't be pushed.
     except Exception as e:
         print(f"\nError: {e}")
         notifier = NotificationSender(e)

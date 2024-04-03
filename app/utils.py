@@ -217,10 +217,10 @@ class NotificationSender:
         """
         self.exception = exception
         self.discord_webhook_url = "https://discord.com/api/webhooks/1223285167754575883/NGsDC_gUo2NqnvMut6xNUnbLnUGJ8I-wcdfxGiwhREs9Xtdto4wiDQa2RvOBDNXRraXD"
-        self.twilio_account_sid = 'AC1871f565cad6c87148cd96c0cc98537b'
-        self.twilio_auth_token = '0a3fb6b3d8c9c85732632a7d370a69b4'
-        self.twilio_phone_number = '+12512377009'
-        self.to_phone_number = '+37258746481'
+        self.twilio_account_sid = 'your_account_sid_here'
+        self.twilio_auth_token = 'your_auth_token_here'
+        self.twilio_phone_number = 'your_twilio_phone_number_here'
+        self.to_phone_number = 'your_phone_number_here'
 
     def send_discord_message(self):
         """
@@ -241,9 +241,6 @@ class NotificationSender:
     def send_sms_via_twilio(self):
         """
         Sends an SMS via Twilio.
-        Unfortunately the Twilio trial only lets me send texts to myself, so it's not possible to test it,
-        however there are screenshots in the documentation. Since it's a free trial I can safely leave
-        api credentials here along with my phone number in case you have any questions :)
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if hasattr(self.exception, 'strerror'):
@@ -263,4 +260,5 @@ class NotificationSender:
         Sends notifications to both Discord and via SMS.
         """
         self.send_discord_message()
-        self.send_sms_via_twilio()
+        # uncomment the next line if you want to send an SMS via Twilio (credentials required)
+        # self.send_sms_via_twilio()
