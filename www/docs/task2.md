@@ -2,7 +2,7 @@
 
 ## Connecting to the Docker container
 
-        docker exec -it <container-id> /bin/sh
+    docker exec -it <container-id> /bin/sh
 
 ## Request counts
 
