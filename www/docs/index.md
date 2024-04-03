@@ -6,7 +6,7 @@ The first part of the technical test solution is implemented using **Python** an
 
 The main.py script serves as the entry point of the program. It establishes an **SSH connection to a Docker container running locally on port 2222** using the SSHConnector class from utils.py. Once connected, it **checks the version of an application (sql.jar)** using the APPUpdater class, updating it to a working version **if necessary**. It then makes a single SQL query and **uses the result to generate and print a 'report card'** using the ReportCard class. **In case of any exceptions, it sends a message via Discord and SMS using the NotificationSender class.**
 
-The utils.py script contains all necessary classes (SSHConnector, APPUpdater, ReportCard, DiscordMessage) for the program to function.
+The utils.py script contains all necessary classes (SSHConnector, APPUpdater, ReportCard, NotificationSender) for the program to function.
 
 The program's **dependencies are listed in the requirements.txt** file and include **paramiko**, **pandas**, and **tabulate**. These can be installed using pip.
 
