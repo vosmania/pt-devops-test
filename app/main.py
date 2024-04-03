@@ -1,4 +1,4 @@
-from utils import SSHConnector, APPUpdater, ReportCard, NotificationSender
+from utils import SSHConnector, APPUpdater, ReportCard#, NotificationSender
 
 def main():
     try:
@@ -21,8 +21,9 @@ def main():
     # since Twilio is tracking secrets on Github they can't be pushed.
     except Exception as e:
         print(f"\nError: {e}")
-        notifier = NotificationSender(e)
-        notifier.send_notifications()
+        # Uncomment the following lines to send notifications (needs configuring in utils.py)
+        # notifier = NotificationSender(e)
+        # notifier.send_notifications()
     finally:
         # Disconnect from the server
         client.disconnect()

@@ -216,7 +216,7 @@ class NotificationSender:
             exception (Exception): The exception that occurred.
         """
         self.exception = exception
-        self.discord_webhook_url = "https://discord.com/api/webhooks/1223285167754575883/NGsDC_gUo2NqnvMut6xNUnbLnUGJ8I-wcdfxGiwhREs9Xtdto4wiDQa2RvOBDNXRraXD"
+        self.discord_webhook_url = "your_discord_webhook_url_here"
         self.twilio_account_sid = 'your_account_sid_here'
         self.twilio_auth_token = 'your_auth_token_here'
         self.twilio_phone_number = 'your_twilio_phone_number_here'
@@ -236,7 +236,7 @@ class NotificationSender:
         if response.status_code == 204:
             print("Discord message sent successfully.")
         else:
-            print("Failed to send Discord message.")
+            print("Failed to send Discord message, check webhook URL.")
 
     def send_sms_via_twilio(self):
         """
